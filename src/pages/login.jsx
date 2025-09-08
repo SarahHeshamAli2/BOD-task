@@ -1,6 +1,8 @@
+import Loginform from "../featuers/auth/loginForm";
 
 export default function Login() {
   return (
-    <div>login</div>
+
+    <Loginform/>
   )
 }
