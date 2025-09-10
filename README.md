@@ -31,4 +31,28 @@ A lightweight user dashboard to browse, manage, and interact with product catego
 - ✅ Notifications for success/error messages  
 - ✅ Loading and error states  
 
+## **Usage**
+1. Navigate the sidebar to explore different data sections.  
+2. Search, paginate, or filter products and categories.  
+3. Add or edit categories using forms.  
+4. Notifications appear for success or error messages.  
+ ## **API Endpoints**
+
+# Fetch all product categories
+GET `/categories/search`
+
+# Fetch items by category name
+GET `/get-items/:categoryName`
+
+# Add a new product/category
+POST `/categories`
+
+# Edit a product/category
+PUT `/categories/:id`
+
+# Delete a product/category
+DELETE `/categories/:id`
+
+# Get top recycled materials
+GET `/top-materials-recycled`
 
