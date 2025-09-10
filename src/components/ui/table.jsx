@@ -57,7 +57,6 @@ const TableRow = memo(({ row, columns, index }) => {
   );
 });
 
-// Memoized MobileCard for mobile view
 const MobileCard = memo(({ row, columns, index }) => {
   const actionsColumn = useMemo(() => 
     columns.find(col => col.key === 'actions'), [columns]
@@ -113,7 +112,6 @@ export default function Table({
   onChangeItemsPerPage,
   showPagination = true 
 }) {
-  // Memoize header rendering to prevent recalculation
   const tableHeader = useMemo(() => (
     <thead>
       <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
@@ -179,7 +177,6 @@ export default function Table({
         </div>
       </div>
 
-      {/* Mobile Cards */}
       <div className="block lg:hidden">
         <div className="space-y-4">
           {hasData ? (

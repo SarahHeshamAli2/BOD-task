@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { PRODUCTS } from "../../../services/end-points";
 import axiosInstance from "../../../services/api";
 
@@ -16,15 +16,20 @@ export const useGetAllProducts = (searchTerm = "", initialPage = 1, initialItems
     hasPreviousPage: false
   });
 
+  const shouldResetPage = useRef(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
+      if (debouncedSearchTerm !== searchTerm) {
+        shouldResetPage.current = true;
+        setDebouncedSearchTerm(searchTerm);
+      }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearchTerm]);
 
-  const getAllProducts = useCallback(async (page = pagination.currentPage, itemsPerPage = pagination.itemsPerPage) => {
+  const getAllProducts = useCallback(async (page, itemsPerPage, searchQuery) => {
     try {
       setLoading(true);
       setError(null);
@@ -32,7 +37,7 @@ export const useGetAllProducts = (searchTerm = "", initialPage = 1, initialItems
       const params = {
         page,
         limit: itemsPerPage,
-        ...(debouncedSearchTerm && { search: debouncedSearchTerm })
+        ...(searchQuery && { search: searchQuery })
       };
       
       const response = await axiosInstance.get(PRODUCTS.GET_ALL_PRODUCTS, { params });
@@ -45,49 +50,49 @@ export const useGetAllProducts = (searchTerm = "", initialPage = 1, initialItems
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearchTerm, pagination.currentPage, pagination.itemsPerPage]); 
+  }, []); 
 
   useEffect(() => {
-    getAllProducts();
-  }, [getAllProducts]);
+    const page = shouldResetPage.current ? 1 : pagination.currentPage;
+    shouldResetPage.current = false;
+    
+    getAllProducts(page, pagination.itemsPerPage, debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
-  // Reset to first page when search term changes
+  // Initial load
   useEffect(() => {
-    if (debouncedSearchTerm !== searchTerm) {
-      setPagination(prev => ({ ...prev, currentPage: 1 }));
-    }
-  }, [debouncedSearchTerm, searchTerm]);
+    getAllProducts(initialPage, initialItemsPerPage, debouncedSearchTerm);
+  }, []);
 
   const refetch = useCallback(() => {
-    getAllProducts();
-  }, [getAllProducts]);
+    getAllProducts(pagination.currentPage, pagination.itemsPerPage, debouncedSearchTerm);
+  }, [getAllProducts, pagination.currentPage, pagination.itemsPerPage, debouncedSearchTerm]);
 
-  // Pagination handlers
   const goToNextPage = useCallback(() => {
     if (pagination.hasNextPage) {
       const nextPage = pagination.currentPage + 1;
-      getAllProducts(nextPage, pagination.itemsPerPage);
+      getAllProducts(nextPage, pagination.itemsPerPage, debouncedSearchTerm);
     }
-  }, [pagination.hasNextPage, pagination.currentPage, pagination.itemsPerPage, getAllProducts]);
+  }, [pagination.hasNextPage, pagination.currentPage, pagination.itemsPerPage, debouncedSearchTerm, getAllProducts]);
 
   const goToPreviousPage = useCallback(() => {
     if (pagination.hasPreviousPage) {
       const prevPage = pagination.currentPage - 1;
-      getAllProducts(prevPage, pagination.itemsPerPage);
+      getAllProducts(prevPage, pagination.itemsPerPage, debouncedSearchTerm);
     }
-  }, [pagination.hasPreviousPage, pagination.currentPage, pagination.itemsPerPage, getAllProducts]);
+  }, [pagination.hasPreviousPage, pagination.currentPage, pagination.itemsPerPage, debouncedSearchTerm, getAllProducts]);
 
   const goToPage = useCallback((page) => {
     if (page >= 1 && page <= pagination.totalPages && page !== pagination.currentPage) {
-      getAllProducts(page, pagination.itemsPerPage);
+      getAllProducts(page, pagination.itemsPerPage, debouncedSearchTerm);
     }
-  }, [pagination.totalPages, pagination.currentPage, pagination.itemsPerPage, getAllProducts]);
+  }, [pagination.totalPages, pagination.currentPage, pagination.itemsPerPage, debouncedSearchTerm, getAllProducts]);
 
   const changeItemsPerPage = useCallback((newItemsPerPage) => {
     if (newItemsPerPage !== pagination.itemsPerPage) {
-      getAllProducts(1, newItemsPerPage); // Reset to first page when changing items per page
+      getAllProducts(1, newItemsPerPage, debouncedSearchTerm); 
     }
-  }, [pagination.itemsPerPage, getAllProducts]);
+  }, [pagination.itemsPerPage, debouncedSearchTerm, getAllProducts]);
 
   return {
     allProducts,

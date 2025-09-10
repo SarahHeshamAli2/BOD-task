@@ -4,6 +4,8 @@ import Dashboard from "./pages/dashboard"
 import { Toaster } from "react-hot-toast"
 import DashboardLayout from "./components/layout/dashboardLayout"
 import Products from "./featuers/Products/products"
+import AuthContextProvider from "./context/authContext"
+import NotFound from "./pages/notFound"
 
 export default function App() {
 
@@ -23,6 +25,10 @@ const router = createBrowserRouter([{
     { index: true, element: <Dashboard /> },
     { path: 'products', element: <Products /> }
   ]
+},
+{
+  path : '*',
+  element: <NotFound/>
 }
 ])
 
@@ -32,7 +38,10 @@ const router = createBrowserRouter([{
   return (
     <>
       <Toaster/>
+      <AuthContextProvider>
         <RouterProvider router={router}/>
+
+      </AuthContextProvider>
 
     </>
   )

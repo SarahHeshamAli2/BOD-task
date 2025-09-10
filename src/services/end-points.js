@@ -4,6 +4,7 @@ export const PRODUCTS = {
     DELETE_PRODUCT :(id)=> `/categories/${id}`,
     ADD_NEW_PRODUCT:'/categories',
     EDIT_PRODUCT :(id)=> `/categories/${id}`,
-    GET_PRODUCT_BY_NAME:(categoryName)=>`/get-items/${categoryName}`
+    GET_PRODUCT_BY_NAME:(categoryName)=>`/get-items/${categoryName}`,
+    GET_TOP_PRODUCTS :'top-materials-recycled'
 
 }

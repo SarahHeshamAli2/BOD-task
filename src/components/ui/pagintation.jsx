@@ -60,14 +60,15 @@ const Pagination = memo(({
       <div className="flex items-center space-x-3">
         <label className="text-sm font-medium text-gray-700">Items per page:</label>
         <select
+        
           value={itemsPerPage}
           onChange={(e) => onChangeItemsPerPage(Number(e.target.value))}
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
         >
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={50}>50</option>
+          <option label='5' value={5}>5</option>
+          <option label='10' value={10}>10</option>
+          <option label='20' value={20}>20</option>
+          <option label='50' value={50}>50</option>
         </select>
       </div>
 

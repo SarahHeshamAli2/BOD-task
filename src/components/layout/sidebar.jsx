@@ -1,17 +1,28 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../featuers/auth/useAuth";
+import { LogInIcon,LogOut,LogOutIcon } from "lucide-react";
+
 
 export default function Sidebar() {
+  const navigate = useNavigate()
 const [isExpanded, setIsExpanded] = useState(() => {
   const saved = localStorage.getItem('sidebar');
   return saved ? JSON.parse(saved) : true; 
 });
   
+
 const toggleSidebar = () => {
     const newValue = !isExpanded;
     setIsExpanded(newValue);
     localStorage.setItem('sidebar', JSON.stringify(newValue));
 };
+const {user,logout} = useAuth()
+
+const handleNavigateToLogin = ()=>{
+  navigate('/login')
+
+}
 
   return (
     <aside className={`${isExpanded ? 'w-64' : 'w-20'} min-h-screen bg-gray-800 text-white flex flex-col p-4 transition-all duration-300 ease-in-out`}>
@@ -63,31 +74,22 @@ const toggleSidebar = () => {
           {isExpanded && <span className="transition-opacity duration-200">Items</span>}
         </NavLink>
 
-        <NavLink 
-          to="/dashboard/settings" 
-          className={({ isActive }) => 
-            `${isActive ? "bg-gray-700" : "hover:bg-gray-700"} px-3 py-2 rounded transition-colors duration-200 flex items-center gap-3 group`
-          }
-          title={!isExpanded ? "Settings" : ""}
-        >
-          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-          {isExpanded && <span className="transition-opacity duration-200">Settings</span>}
-        </NavLink>
+      
       </nav>
 
-        <div className="mt-auto pt-4 border-t border-gray-700">
+ <div className="mt-auto pt-4 border-t border-gray-700">
           <div className={`${isExpanded && 'flex'} items-center gap-3 px-3 py-2 text-sm text-gray-300`}>
             <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
+            <button className="cursor-pointer">
+             {
+              user ?   <LogOut  onClick={logout}/> : <LogInIcon onClick={handleNavigateToLogin}/>
+             }
+            </button>
             </div>
-            <span>User Name</span>
+            <span>{user ? user?.name : 'Login'}</span>
           </div>
         </div>
+      
  
     </aside>
   );

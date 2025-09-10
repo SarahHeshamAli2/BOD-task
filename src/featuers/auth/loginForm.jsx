@@ -5,8 +5,14 @@ import axiosInstance from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "../../services/validations";
 import toast from "react-hot-toast";
+import { useTogglePassword } from "../../hooks/useToggleShowPassword";
+import { useAuth } from "./useAuth";
 
 export default function LoginForm() {
+  const {toggleShowPassword,type,EyeIcon}=useTogglePassword()
+  const {setAuthUser} = useAuth()
+  
+  
 
   const navigate = useNavigate();
 
@@ -19,7 +25,13 @@ export default function LoginForm() {
   const onSubmitHandler = async (values) => {
     try {
       const response = await axiosInstance.post("/auth/login", values);
+      console.log(response.data.user);
+      
+
       localStorage.setItem("token", response?.data?.accessToken);
+      localStorage.setItem('user',JSON.stringify(response?.data.user))
+      setAuthUser(response?.data.user)
+
             toast.success('welcome back','success')
 
       navigate("/dashboard",{
@@ -46,14 +58,19 @@ export default function LoginForm() {
             className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-200"
           />
 
-          <Input
+    <div className="relative">
+             <Input
             {...register("password", PASSWORD_VALIDATION)}
             label="Password"
-            type="password"
+            type={type}
             error={errors.password && errors.password.message}
             className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-200"
           />
+          <button onClick={toggleShowPassword} type="button" className="absolute  top-1/2 end-[20px] cursor-pointer">
+<EyeIcon  />
 
+          </button>
+    </div>
           <Button
             disabled={isSubmitting}
             variant="primary"

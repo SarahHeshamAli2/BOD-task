@@ -1,15 +1,30 @@
 import { Ellipsis } from "lucide-react";
 
-export function ProductActions({ row, activeRow, toggleActions, handleShowDelete,handleEditItem }) {
-
+export function ProductActions({ 
+  row, 
+  activeRow, 
+  toggleActions, 
+  handleShowDelete, 
+  handleEditItem,
+  isModalOpen,
+  isFormModalOpen 
+}) {
+  const shouldShowDropdown = activeRow === row._id && !isModalOpen && !isFormModalOpen;
   
   return (
     <div className="relative">
-      <Ellipsis onClick={() => toggleActions(row._id)} className="cursor-pointer" />
-      {activeRow === row._id && (
+      <Ellipsis 
+        onClick={() => {
+          if (!isModalOpen && !isFormModalOpen) {
+            toggleActions(row._id);
+          }
+        }} 
+        className="cursor-pointer" 
+      />
+      {shouldShowDropdown && (
         <div className="absolute right-0 mt-2 flex items-center space-x-2 bg-white shadow-lg rounded-xl p-2 z-10">
           <button
-          onClick={()=>handleEditItem(row.displayName)}
+            onClick={() => handleEditItem(row.displayName)}
             className="group cursor-pointer relative inline-flex items-center justify-center w-9 h-9 text-blue-600 bg-blue-50 border border-blue-100 rounded-xl hover:bg-blue-100 hover:border-blue-200 focus:z-10 focus:ring-2 focus:ring-blue-500/20 focus:bg-blue-100 transition-all duration-200 hover:shadow-lg hover:scale-105"
             title="Edit Product">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

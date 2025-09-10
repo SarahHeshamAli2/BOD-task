@@ -102,7 +102,7 @@ const fetchItemForEdit = useCallback(async () => {
     if (isOpen && isEditing && catName) {
       fetchItemForEdit();
     }
-  }, [isOpen, isEditing, catName]);
+  }, [isOpen, isEditing, catName,fetchItemForEdit]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -147,7 +147,8 @@ const fetchItemForEdit = useCallback(async () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      {
+        isLoadingEdit ? <p>Loading...</p> :     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
             <div>
               <Input 
                 label="Product Name" 
@@ -162,7 +163,6 @@ const fetchItemForEdit = useCallback(async () => {
               )}
             </div>
 
-            {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Product Image
@@ -183,7 +183,6 @@ const fetchItemForEdit = useCallback(async () => {
                   <p className="text-xs text-red-500">{errors.image.message}</p>
                 )}
                 
-                {/* Show existing image for edit mode */}
                 {existingImageUrl && !imagePreview && (
                   <div className="relative">
                     <p className="text-sm font-medium text-gray-700 mb-2">Current Image:</p>
@@ -203,7 +202,6 @@ const fetchItemForEdit = useCallback(async () => {
                   </div>
                 )}
                 
-                {/* Show new image preview */}
                 {imagePreview && (
                   <div className="relative">
                     <p className="text-sm font-medium text-gray-700 mb-2">
@@ -251,6 +249,7 @@ const fetchItemForEdit = useCallback(async () => {
               )}
             </div>
           </form>
+      }
         </div>
 
         <div className="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t border-gray-100">
